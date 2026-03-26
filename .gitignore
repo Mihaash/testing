@@ -3,4 +3,9 @@
 *.tfstate
 *.tfstate.backup
 
+# Maven
+target/
+app/target/
+**/target/
+
 

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ÉLITE — Companion & Escort Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&display=swap" rel="stylesheet"/>
+</head>
+<body style="margin:0;padding:0;background:#080808;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;min-height:100vh;overflow-x:hidden;">
+
+<!-- ANIMATED BACKGROUND -->
+<div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+  <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(196,160,80,0.07) 0%,transparent 70%);top:-100px;right:-100px;animation:pulse 8s ease-in-out infinite;"></div>
+  <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(196,160,80,0.05) 0%,transparent 70%);bottom:100px;left:-50px;animation:pulse 10s ease-in-out infinite 2s;"></div>
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(196,160,80,0.015) 80px,rgba(196,160,80,0.015) 81px),repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(196,160,80,0.015) 80px,rgba(196,160,80,0.015) 81px);"></div>
+</div>
+
+<style>
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.15);opacity:1} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes blinkDot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@keyframes ping { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(2.5);opacity:0} }
+</style>
+
+<!-- NAV -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;background:linear-gradient(180deg,rgba(8,8,8,0.98) 0%,transparent 100%);border-bottom:1px solid rgba(196,160,80,0.12);">
+  <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;letter-spacing:8px;color:#c4a050;">ÉLITE</div>
+  <div style="display:flex;gap:32px;align-items:center;">
+    <span onclick="showPage('home')" style="font-size:11px;letter-spacing:3px;color:#c4a050;cursor:pointer;opacity:0.8;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">HOME</span>
+    <span onclick="showPage('companions')" style="font-size:11px;letter-spacing:3px;cursor:pointer;opacity:0.5;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">COMPANIONS</span>
+    <span onclick="showPage('booking')" style="font-size:11px;letter-spacing:3px;cursor:pointer;opacity:0.5;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">BOOK</span>
+    <span onclick="showPage('tracking')" style="font-size:11px;letter-spacing:3px;cursor:pointer;opacity:0.5;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">TRACK</span>
+    <span onclick="showPage('profile')" style="font-size:11px;letter-spacing:3px;cursor:pointer;opacity:0.5;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">PROFILE</span>
+  </div>
+  <div onclick="showPage('booking')" style="padding:10px 24px;border:1px solid #c4a050;font-size:10px;letter-spacing:3px;cursor:pointer;background:transparent;color:#c4a050;transition:all 0.3s;" onmouseover="this.style.background='#c4a050';this.style.color='#080808'" onmouseout="this.style.background='transparent';this.style.color='#c4a050'">RESERVE NOW</div>
+</nav>
+
+<!-- ============ PAGE: HOME ============ -->
+<div id="page-home" style="position:relative;z-index:1;">
+  <!-- HERO -->
+  <section style="min-height:100vh;display:flex;align-items:center;padding:0 48px;padding-top:100px;">
+    <div style="max-width:680px;animation:fadeInUp 1s ease both;">
+      <div style="font-size:10px;letter-spacing:6px;color:#c4a050;margin-bottom:24px;opacity:0.8;">EXCLUSIVE EVENT COMPANION SERVICE</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(56px,8vw,96px);font-weight:300;line-height:1.05;margin:0 0 32px;letter-spacing:-1px;">
+        Your Perfect<br/><em style="font-style:italic;color:#c4a050;">Companion</em><br/>For Every Event
+      </h1>
+      <p style="font-size:13px;letter-spacing:2px;line-height:2;color:#a09070;max-width:440px;margin-bottom:48px;">Curated companions for galas, corporate events, theatre, and private gatherings. Discretion guaranteed. Elegance delivered.</p>
+      <div style="display:flex;gap:20px;align-items:center;">
+        <div onclick="showPage('booking')" style="padding:16px 40px;background:linear-gradient(135deg,#c4a050,#e8d070,#c4a050);background-size:200% auto;color:#080808;font-size:10px;letter-spacing:4px;cursor:pointer;font-weight:400;transition:all 0.4s;" onmouseover="this.style.backgroundPosition='right center'" onmouseout="this.style.backgroundPosition='left center'">BOOK A COMPANION</div>
+        <div onclick="showPage('companions')" style="font-size:10px;letter-spacing:3px;color:#c4a050;cursor:pointer;border-bottom:1px solid rgba(196,160,80,0.4);padding-bottom:2px;">VIEW PROFILES →</div>
+      </div>
+    </div>
+    <!-- Decorative orb -->
+    <div style="position:absolute;right:8%;top:50%;transform:translateY(-50%);width:380px;height:380px;border-radius:50%;border:1px solid rgba(196,160,80,0.15);display:flex;align-items:center;justify-content:center;">
+      <div style="width:300px;height:300px;border-radius:50%;border:1px solid rgba(196,160,80,0.1);display:flex;align-items:center;justify-content:center;">
+        <div style="width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(196,160,80,0.18),rgba(196,160,80,0.04));display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:48px;color:#c4a050;">★</div>
+          <div style="font-size:9px;letter-spacing:4px;color:#c4a050;opacity:0.7;">ÉLITE TIER</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section style="padding:60px 48px;border-top:1px solid rgba(196,160,80,0.1);border-bottom:1px solid rgba(196,160,80,0.1);display:flex;gap:0;justify-content:center;">
+    <div style="text-align:center;padding:0 60px;border-right:1px solid rgba(196,160,80,0.15);">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:52px;color:#c4a050;font-weight:300;">240+</div>
+      <div style="font-size:9px;letter-spacing:4px;color:#a09070;margin-top:4px;">COMPANIONS</div>
+    </div>
+    <div style="text-align:center;padding:0 60px;border-right:1px solid rgba(196,160,80,0.15);">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:52px;color:#c4a050;font-weight:300;">98%</div>
+      <div style="font-size:9px;letter-spacing:4px;color:#a09070;margin-top:4px;">SATISFACTION</div>
+    </div>
+    <div style="text-align:center;padding:0 60px;border-right:1px solid rgba(196,160,80,0.15);">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:52px;color:#c4a050;font-weight:300;">12K+</div>
+      <div style="font-size:9px;letter-spacing:4px;color:#a09070;margin-top:4px;">EVENTS SERVED</div>
+    </div>
+    <div style="text-align:center;padding:0 60px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:52px;color:#c4a050;font-weight:300;">100%</div>
+      <div style="font-size:9px;letter-spacing:4px;color:#a09070;margin-top:4px;">DISCREET</div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section style="padding:100px 48px;">
+    <div style="text-align:center;margin-bottom:64px;">
+      <div style="font-size:9px;letter-spacing:6px;color:#c4a050;margin-bottom:16px;">OUR SERVICES</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;margin:0;">Every Occasion, Perfected</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;max-width:1100px;margin:0 auto;">
+      <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:48px 36px;transition:all 0.3s;cursor:pointer;" onmouseover="this.style.background='rgba(196,160,80,0.09)';this.style.borderColor='rgba(196,160,80,0.35)'" onmouseout="this.style.background='rgba(196,160,80,0.04)';this.style.borderColor='rgba(196,160,80,0.12)'">
+        <div style="font-size:32px;margin-bottom:20px;">🎭</div>
+        <div style="font-size:11px;letter-spacing:3px;color:#c4a050;margin-bottom:12px;">GALAS & THEATRE</div>
+        <p style="font-size:12px;line-height:1.9;color:#a09070;margin:0;">Elegant companions versed in the arts, culture, and high society etiquette.</p>
+      </div>
+      <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:48px 36px;transition:all 0.3s;cursor:pointer;" onmouseover="this.style.background='rgba(196,160,80,0.09)';this.style.borderColor='rgba(196,160,80,0.35)'" onmouseout="this.style.background='rgba(196,160,80,0.04)';this.style.borderColor='rgba(196,160,80,0.12)'">
+        <div style="font-size:32px;margin-bottom:20px;">💼</div>
+        <div style="font-size:11px;letter-spacing:3px;color:#c4a050;margin-bottom:12px;">CORPORATE EVENTS</div>
+        <p style="font-size:12px;line-height:1.9;color:#a09070;margin:0;">Professional and articulate companions for conferences, dinners, and networking.</p>
+      </div>
+      <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:48px 36px;transition:all 0.3s;cursor:pointer;" onmouseover="this.style.background='rgba(196,160,80,0.09)';this.style.borderColor='rgba(196,160,80,0.35)'" onmouseout="this.style.background='rgba(196,160,80,0.04)';this.style.borderColor='rgba(196,160,80,0.12)'">
+        <div style="font-size:32px;margin-bottom:20px;">🥂</div>
+        <div style="font-size:11px;letter-spacing:3px;color:#c4a050;margin-bottom:12px;">PRIVATE GATHERINGS</div>
+        <p style="font-size:12px;line-height:1.9;color:#a09070;margin:0;">Intimate and charming companions for private dinners, parties, and celebrations.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PAGE: COMPANIONS ============ -->
+<div id="page-companions" style="position:relative;z-index:1;display:none;padding-top:120px;padding-bottom:80px;min-height:100vh;">
+  <div style="padding:0 48px;">
+    <div style="margin-bottom:48px;">
+      <div style="font-size:9px;letter-spacing:6px;color:#c4a050;margin-bottom:12px;">OUR COMPANIONS</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;margin:0 0 8px;">Meet the Elite</h2>
+      <p style="font-size:11px;letter-spacing:2px;color:#a09070;">Handpicked, verified, and trained for excellence.</p>
+    </div>
+
+    <!-- Filters -->
+    <div style="display:flex;gap:12px;margin-bottom:40px;" id="filterBtns">
+      <div onclick="filterCompanions('all')" style="padding:8px 20px;border:1px solid #c4a050;font-size:9px;letter-spacing:3px;cursor:pointer;background:#c4a050;color:#080808;" class="filter-btn">ALL</div>
+      <div onclick="filterCompanions('gala')" style="padding:8px 20px;border:1px solid rgba(196,160,80,0.3);font-size:9px;letter-spacing:3px;cursor:pointer;color:#c4a050;background:transparent;" class="filter-btn">GALAS</div>
+      <div onclick="filterCompanions('corporate')" style="padding:8px 20px;border:1px solid rgba(196,160,80,0.3);font-size:9px;letter-spacing:3px;cursor:pointer;color:#c4a050;background:transparent;" class="filter-btn">CORPORATE</div>
+      <div onclick="filterCompanions('private')" style="padding:8px 20px;border:1px solid rgba(196,160,80,0.3);font-size:9px;letter-spacing:3px;cursor:pointer;color:#c4a050;background:transparent;" class="filter-btn">PRIVATE</div>
+    </div>
+
+    <!-- Companion Cards -->
+    <div id="companionGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE: BOOKING ============ -->
+<div id="page-booking" style="position:relative;z-index:1;display:none;padding-top:120px;padding-bottom:80px;min-height:100vh;">
+  <div style="padding:0 48px;max-width:900px;">
+    <div style="margin-bottom:48px;">
+      <div style="font-size:9px;letter-spacing:6px;color:#c4a050;margin-bottom:12px;">RESERVATION</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;margin:0;">Book Your Companion</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;">
+      <!-- Form Left -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div>
+          <label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">YOUR NAME</label>
+          <input type="text" placeholder="Full Name" style="width:100%;box-sizing:border-box;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.2);padding:14px 16px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;letter-spacing:2px;outline:none;transition:border 0.3s;" onfocus="this.style.borderColor='rgba(196,160,80,0.7)'" onblur="this.style.borderColor='rgba(196,160,80,0.2)'" />
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">EVENT TYPE</label>
+          <select style="width:100%;box-sizing:border-box;background:#0f0f0f;border:1px solid rgba(196,160,80,0.2);padding:14px 16px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;letter-spacing:2px;outline:none;appearance:none;">
+            <option>Gala / Theatre</option>
+            <option>Corporate Dinner</option>
+            <option>Private Party</option>
+            <option>Networking Event</option>
+            <option>Wedding</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">EVENT DATE</label>
+          <input type="date" style="width:100%;box-sizing:border-box;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.2);padding:14px 16px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;outline:none;transition:border 0.3s;color-scheme:dark;" onfocus="this.style.borderColor='rgba(196,160,80,0.7)'" onblur="this.style.borderColor='rgba(196,160,80,0.2)'" />
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">DURATION</label>
+          <select style="width:100%;box-sizing:border-box;background:#0f0f0f;border:1px solid rgba(196,160,80,0.2);padding:14px 16px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;letter-spacing:2px;outline:none;appearance:none;">
+            <option>2 Hours</option>
+            <option>4 Hours</option>
+            <option>6 Hours</option>
+            <option>Full Evening</option>
+            <option>Full Day</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">VENUE / LOCATION</label>
+          <input type="text" placeholder="Venue name or address" style="width:100%;box-sizing:border-box;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.2);padding:14px 16px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;letter-spacing:2px;outline:none;transition:border 0.3s;" onfocus="this.style.borderColor='rgba(196,160,80,0.7)'" onblur="this.style.borderColor='rgba(196,160,80,0.2)'" />
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">SPECIAL REQUESTS</label>
+          <textarea placeholder="Any preferences or special requirements..." rows="4" style="width:100%;box-sizing:border-box;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.2);padding:14px 16px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;letter-spacing:2px;outline:none;resize:vertical;transition:border 0.3s;" onfocus="this.style.borderColor='rgba(196,160,80,0.7)'" onblur="this.style.borderColor='rgba(196,160,80,0.2)'"></textarea>
+        </div>
+        <div onclick="submitBooking()" style="padding:16px;background:linear-gradient(135deg,#c4a050,#e8d070);color:#080808;font-size:10px;letter-spacing:4px;cursor:pointer;text-align:center;font-weight:400;transition:opacity 0.3s;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">CONFIRM RESERVATION</div>
+      </div>
+
+      <!-- Summary Right -->
+      <div>
+        <div style="background:rgba(196,160,80,0.05);border:1px solid rgba(196,160,80,0.15);padding:36px;">
+          <div style="font-size:10px;letter-spacing:4px;color:#c4a050;margin-bottom:28px;border-bottom:1px solid rgba(196,160,80,0.15);padding-bottom:16px;">BOOKING SUMMARY</div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;">
+              <span style="color:#a09070;letter-spacing:1px;">Companion Tier</span>
+              <span style="color:#c4a050;">ÉLITE</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;">
+              <span style="color:#a09070;letter-spacing:1px;">Base Rate</span>
+              <span>$280 / hr</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;">
+              <span style="color:#a09070;letter-spacing:1px;">Service Fee</span>
+              <span>$80</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;">
+              <span style="color:#a09070;letter-spacing:1px;">Concierge</span>
+              <span>Included</span>
+            </div>
+            <div style="border-top:1px solid rgba(196,160,80,0.2);padding-top:16px;display:flex;justify-content:space-between;font-size:14px;">
+              <span style="color:#c4a050;letter-spacing:2px;">TOTAL (4h)</span>
+              <span style="color:#c4a050;font-family:'Cormorant Garamond',serif;font-size:22px;">$1,200</span>
+            </div>
+          </div>
+          <div style="margin-top:28px;padding:16px;background:rgba(196,160,80,0.06);border-left:2px solid #c4a050;">
+            <div style="font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:6px;">🔒 DISCRETION GUARANTEED</div>
+            <p style="font-size:10px;line-height:1.8;color:#a09070;margin:0;">All bookings are fully confidential. Your information is never shared.</p>
+          </div>
+          <div style="margin-top:20px;padding:16px;background:rgba(196,160,80,0.06);border-left:2px solid #c4a050;">
+            <div style="font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:6px;">📍 LIVE TRACKING</div>
+            <p style="font-size:10px;line-height:1.8;color:#a09070;margin:0;">Track your companion's arrival in real-time once confirmed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;">
+    <div style="background:#0f0f0f;border:1px solid rgba(196,160,80,0.3);padding:60px;text-align:center;max-width:480px;animation:fadeInUp 0.4s ease;">
+      <div style="font-size:40px;margin-bottom:20px;">✦</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:32px;color:#c4a050;margin-bottom:12px;">Reservation Confirmed</div>
+      <p style="font-size:11px;letter-spacing:2px;color:#a09070;line-height:2;margin-bottom:32px;">Your booking is confirmed. Your personal concierge will contact you within 2 hours with companion details.</p>
+      <div style="font-size:10px;letter-spacing:3px;color:#c4a050;margin-bottom:28px;">BOOKING REF: ÉLITE-2024-7891</div>
+      <div onclick="document.getElementById('confirmModal').style.display='none';showPage('tracking')" style="padding:14px 32px;background:#c4a050;color:#080808;font-size:9px;letter-spacing:3px;cursor:pointer;display:inline-block;">TRACK YOUR COMPANION</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE: TRACKING ============ -->
+<div id="page-tracking" style="position:relative;z-index:1;display:none;padding-top:120px;padding-bottom:80px;min-height:100vh;">
+  <div style="padding:0 48px;">
+    <div style="margin-bottom:40px;">
+      <div style="font-size:9px;letter-spacing:6px;color:#c4a050;margin-bottom:12px;">LIVE TRACKING</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;margin:0;">Companion Arrival</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:32px;">
+      <!-- Map -->
+      <div style="position:relative;background:#0a0a0a;border:1px solid rgba(196,160,80,0.15);height:520px;overflow:hidden;">
+        <!-- Simulated map grid -->
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(196,160,80,0.04) 40px,rgba(196,160,80,0.04) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(196,160,80,0.04) 40px,rgba(196,160,80,0.04) 41px);"></div>
+        <!-- Roads -->
+        <div style="position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(196,160,80,0.15);transform:translateY(-50%);"></div>
+        <div style="position:absolute;top:30%;left:0;right:0;height:1px;background:rgba(196,160,80,0.08);transform:translateY(-50%);"></div>
+        <div style="position:absolute;top:70%;left:0;right:0;height:1px;background:rgba(196,160,80,0.08);transform:translateY(-50%);"></div>
+        <div style="position:absolute;left:30%;top:0;bottom:0;width:2px;background:rgba(196,160,80,0.15);"></div>
+        <div style="position:absolute;left:60%;top:0;bottom:0;width:1px;background:rgba(196,160,80,0.08);"></div>
+        <div style="position:absolute;left:80%;top:0;bottom:0;width:1px;background:rgba(196,160,80,0.08);"></div>
+        <!-- Destination pin -->
+        <div style="position:absolute;left:60%;top:48%;transform:translate(-50%,-100%);">
+          <div style="text-align:center;">
+            <div style="width:16px;height:16px;background:#c4a050;border-radius:50% 50% 50% 0;transform:rotate(-45deg);margin:0 auto;"></div>
+            <div style="font-size:9px;letter-spacing:2px;color:#c4a050;margin-top:8px;transform:rotate(0deg);white-space:nowrap;">YOUR VENUE</div>
+          </div>
+        </div>
+        <!-- Moving companion dot -->
+        <div id="companionDot" style="position:absolute;left:20%;top:50%;transform:translate(-50%,-50%);transition:left 3s linear,top 3s linear;">
+          <div style="position:relative;">
+            <div style="position:absolute;inset:-8px;border-radius:50%;background:rgba(196,160,80,0.25);animation:ping 1.5s ease-out infinite;"></div>
+            <div style="width:18px;height:18px;background:#c4a050;border-radius:50%;border:2px solid #e8d070;"></div>
+          </div>
+          <div style="font-size:8px;letter-spacing:2px;color:#c4a050;margin-top:6px;white-space:nowrap;">VICTORIA S.</div>
+        </div>
+        <!-- Route line -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;">
+          <line x1="20%" y1="50%" x2="60%" y2="48%" stroke="rgba(196,160,80,0.25)" stroke-width="2" stroke-dasharray="6,4"/>
+        </svg>
+        <!-- ETA badge -->
+        <div style="position:absolute;top:20px;left:20px;background:rgba(8,8,8,0.9);border:1px solid rgba(196,160,80,0.3);padding:12px 20px;">
+          <div style="font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:4px;">ETA</div>
+          <div id="etaDisplay" style="font-family:'Cormorant Garamond',serif;font-size:28px;color:#e8d9b5;">12 min</div>
+        </div>
+        <div style="position:absolute;bottom:20px;right:20px;background:rgba(8,8,8,0.9);border:1px solid rgba(196,160,80,0.15);padding:10px 16px;display:flex;align-items:center;gap:8px;">
+          <div style="width:6px;height:6px;background:#4caf50;border-radius:50%;animation:blinkDot 1.5s infinite;"></div>
+          <span style="font-size:9px;letter-spacing:3px;color:#a09070;">LIVE</span>
+        </div>
+      </div>
+
+      <!-- Info Panel -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <!-- Companion card -->
+        <div style="background:rgba(196,160,80,0.05);border:1px solid rgba(196,160,80,0.2);padding:28px;">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+            <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#c4a050,#8a6a20);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">👑</div>
+            <div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:2px;">Victoria S.</div>
+              <div style="font-size:9px;letter-spacing:3px;color:#c4a050;">ÉLITE COMPANION</div>
+              <div style="font-size:10px;color:#a09070;margin-top:4px;">⭐⭐⭐⭐⭐ 4.97</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(196,160,80,0.12);padding-top:16px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:10px;">
+              <span style="color:#a09070;">Status</span>
+              <span style="color:#4caf50;letter-spacing:1px;">En Route</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;">
+              <span style="color:#a09070;">Distance</span>
+              <span>3.2 km away</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;">
+              <span style="color:#a09070;">Transport</span>
+              <span>Private Car</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;">
+              <span style="color:#a09070;">Booking Ref</span>
+              <span style="color:#c4a050;">ÉLITE-7891</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Steps -->
+        <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:24px;">
+          <div style="font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:20px;">ARRIVAL STATUS</div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#c4a050;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;color:#080808;">✓</div>
+              <div><div style="font-size:10px;letter-spacing:1px;">Booking Confirmed</div><div style="font-size:9px;color:#a09070;margin-top:2px;">6:30 PM</div></div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#c4a050;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;color:#080808;">✓</div>
+              <div><div style="font-size:10px;letter-spacing:1px;">Companion Assigned</div><div style="font-size:9px;color:#a09070;margin-top:2px;">6:45 PM</div></div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div style="width:20px;height:20px;border-radius:50%;background:#c4a050;animation:blinkDot 1.5s infinite;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;color:#080808;">●</div>
+              <div><div style="font-size:10px;letter-spacing:1px;color:#c4a050;">En Route to Venue</div><div style="font-size:9px;color:#a09070;margin-top:2px;">Now</div></div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start;opacity:0.4;">
+              <div style="width:20px;height:20px;border-radius:50%;border:1px solid rgba(196,160,80,0.3);flex-shrink:0;"></div>
+              <div><div style="font-size:10px;letter-spacing:1px;">Arrival</div><div style="font-size:9px;color:#a09070;margin-top:2px;">~8:12 PM</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div onclick="" style="padding:14px;background:rgba(196,160,80,0.08);border:1px solid rgba(196,160,80,0.2);font-size:9px;letter-spacing:3px;text-align:center;cursor:pointer;color:#c4a050;transition:all 0.3s;" onmouseover="this.style.background='rgba(196,160,80,0.15)'" onmouseout="this.style.background='rgba(196,160,80,0.08)'">📞 CONTACT CONCIERGE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE: PROFILE ============ -->
+<div id="page-profile" style="position:relative;z-index:1;display:none;padding-top:120px;padding-bottom:80px;min-height:100vh;">
+  <div style="padding:0 48px;max-width:1000px;">
+    <div style="margin-bottom:48px;">
+      <div style="font-size:9px;letter-spacing:6px;color:#c4a050;margin-bottom:12px;">CLIENT PORTAL</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;margin:0;">My Profile</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:32px;">
+      <!-- Left sidebar -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="background:rgba(196,160,80,0.05);border:1px solid rgba(196,160,80,0.2);padding:32px;text-align:center;">
+          <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#c4a050,#6a4a10);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px;">👤</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:4px;">James Whitmore</div>
+          <div style="font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:16px;">PLATINUM MEMBER</div>
+          <div style="font-size:10px;color:#a09070;line-height:1.8;">Member Since 2021<br/>14 Bookings</div>
+        </div>
+        <div style="background:rgba(196,160,80,0.05);border:1px solid rgba(196,160,80,0.12);padding:20px;">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div onclick="setProfileTab('overview')" style="font-size:9px;letter-spacing:3px;cursor:pointer;color:#c4a050;padding:8px 0;" id="tab-overview">OVERVIEW</div>
+            <div onclick="setProfileTab('bookings')" style="font-size:9px;letter-spacing:3px;cursor:pointer;color:#a09070;padding:8px 0;" id="tab-bookings">MY BOOKINGS</div>
+            <div onclick="setProfileTab('reviews')" style="font-size:9px;letter-spacing:3px;cursor:pointer;color:#a09070;padding:8px 0;" id="tab-reviews">REVIEWS</div>
+            <div onclick="setProfileTab('settings')" style="font-size:9px;letter-spacing:3px;cursor:pointer;color:#a09070;padding:8px 0;" id="tab-settings">SETTINGS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right content -->
+      <div>
+        <!-- Overview Tab -->
+        <div id="profileTab-overview">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:28px;">
+            <div style="background:rgba(196,160,80,0.05);border:1px solid rgba(196,160,80,0.15);padding:24px;text-align:center;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#c4a050;">14</div>
+              <div style="font-size:9px;letter-spacing:2px;color:#a09070;margin-top:4px;">TOTAL EVENTS</div>
+            </div>
+            <div style="background:rgba(196,160,80,0.05);border:1px solid rgba(196,160,80,0.15);padding:24px;text-align:center;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#c4a050;">5.0</div>
+              <div style="font-size:9px;letter-spacing:2px;color:#a09070;margin-top:4px;">YOUR RATING</div>
+            </div>
+            <div style="background:rgba(196,160,80,0.05);border:1px solid rgba(196,160,80,0.15);padding:24px;text-align:center;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#c4a050;">3</div>
+              <div style="font-size:9px;letter-spacing:2px;color:#a09070;margin-top:4px;">UPCOMING</div>
+            </div>
+          </div>
+          <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:24px;">
+            <div style="font-size:10px;letter-spacing:3px;color:#c4a050;margin-bottom:20px;border-bottom:1px solid rgba(196,160,80,0.1);padding-bottom:12px;">UPCOMING EVENTS</div>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(196,160,80,0.05);">
+                <div>
+                  <div style="font-size:11px;letter-spacing:1px;margin-bottom:4px;">Metropolitan Gala</div>
+                  <div style="font-size:9px;color:#a09070;letter-spacing:1px;">Dec 14, 2024 · Victoria S.</div>
+                </div>
+                <div style="font-size:9px;letter-spacing:2px;color:#c4a050;border:1px solid rgba(196,160,80,0.3);padding:6px 12px;">CONFIRMED</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(196,160,80,0.05);">
+                <div>
+                  <div style="font-size:11px;letter-spacing:1px;margin-bottom:4px;">Corporate Dinner — Blackwell Group</div>
+                  <div style="font-size:9px;color:#a09070;letter-spacing:1px;">Dec 20, 2024 · Sophie R.</div>
+                </div>
+                <div style="font-size:9px;letter-spacing:2px;color:#c4a050;border:1px solid rgba(196,160,80,0.3);padding:6px 12px;">CONFIRMED</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div id="profileTab-reviews" style="display:none;">
+          <div style="font-size:10px;letter-spacing:3px;color:#c4a050;margin-bottom:24px;">YOUR REVIEWS</div>
+          <div style="display:flex;flex-direction:column;gap:16px;" id="reviewsList"></div>
+          <!-- Write Review -->
+          <div style="margin-top:28px;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.15);padding:28px;">
+            <div style="font-size:10px;letter-spacing:3px;color:#c4a050;margin-bottom:20px;">WRITE A REVIEW</div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;" id="starRating">
+              <span onclick="setRating(1)" style="font-size:24px;cursor:pointer;color:#c4a050;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">★</span>
+              <span onclick="setRating(2)" style="font-size:24px;cursor:pointer;color:#c4a050;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">★</span>
+              <span onclick="setRating(3)" style="font-size:24px;cursor:pointer;color:#c4a050;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">★</span>
+              <span onclick="setRating(4)" style="font-size:24px;cursor:pointer;color:#c4a050;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">★</span>
+              <span onclick="setRating(5)" style="font-size:24px;cursor:pointer;color:rgba(196,160,80,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">★</span>
+            </div>
+            <textarea id="reviewText" placeholder="Share your experience..." rows="4" style="width:100%;box-sizing:border-box;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.2);padding:14px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;outline:none;resize:vertical;letter-spacing:1px;margin-bottom:16px;" onfocus="this.style.borderColor='rgba(196,160,80,0.6)'" onblur="this.style.borderColor='rgba(196,160,80,0.2)'"></textarea>
+            <div onclick="submitReview()" style="padding:12px 28px;background:#c4a050;color:#080808;font-size:9px;letter-spacing:3px;cursor:pointer;display:inline-block;transition:opacity 0.3s;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">SUBMIT REVIEW</div>
+          </div>
+        </div>
+
+        <!-- Bookings Tab -->
+        <div id="profileTab-bookings" style="display:none;">
+          <div style="font-size:10px;letter-spacing:3px;color:#c4a050;margin-bottom:24px;">BOOKING HISTORY</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:20px;display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:11px;margin-bottom:4px;">Royal Opera Gala</div>
+                <div style="font-size:9px;color:#a09070;">Nov 8, 2024 · 5 hrs · Victoria S.</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:13px;color:#c4a050;font-family:'Cormorant Garamond',serif;">$1,480</div>
+                <div style="font-size:9px;color:#4caf50;margin-top:2px;">COMPLETED</div>
+              </div>
+            </div>
+            <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:20px;display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:11px;margin-bottom:4px;">Blackwell Annual Dinner</div>
+                <div style="font-size:9px;color:#a09070;">Oct 22, 2024 · 4 hrs · Sophie R.</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:13px;color:#c4a050;font-family:'Cormorant Garamond',serif;">$1,200</div>
+                <div style="font-size:9px;color:#4caf50;margin-top:2px;">COMPLETED</div>
+              </div>
+            </div>
+            <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:20px;display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:11px;margin-bottom:4px;">Private Birthday Soirée</div>
+                <div style="font-size:9px;color:#a09070;">Sep 15, 2024 · Full Evening · Isabelle M.</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:13px;color:#c4a050;font-family:'Cormorant Garamond',serif;">$2,100</div>
+                <div style="font-size:9px;color:#4caf50;margin-top:2px;">COMPLETED</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="profileTab-settings" style="display:none;">
+          <div style="font-size:10px;letter-spacing:3px;color:#c4a050;margin-bottom:24px;">ACCOUNT SETTINGS</div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div><label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">DISPLAY NAME</label><input value="James Whitmore" style="width:100%;box-sizing:border-box;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.2);padding:14px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;outline:none;" /></div>
+            <div><label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">EMAIL</label><input value="j.whitmore@email.com" style="width:100%;box-sizing:border-box;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.2);padding:14px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;outline:none;" /></div>
+            <div><label style="display:block;font-size:9px;letter-spacing:3px;color:#c4a050;margin-bottom:8px;">PREFERRED COMPANION STYLE</label>
+              <select style="width:100%;box-sizing:border-box;background:#0f0f0f;border:1px solid rgba(196,160,80,0.2);padding:14px;color:#e8d9b5;font-family:'Josefin Sans',sans-serif;font-size:12px;outline:none;appearance:none;">
+                <option>Sophisticated & Intellectual</option><option>Warm & Charismatic</option><option>Adventurous & Spontaneous</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);">
+              <div><div style="font-size:10px;letter-spacing:2px;">SMS Notifications</div><div style="font-size:9px;color:#a09070;margin-top:4px;">Receive booking updates via SMS</div></div>
+              <div onclick="this.dataset.on=this.dataset.on==='1'?'0':'1';this.style.background=this.dataset.on==='1'?'#c4a050':'rgba(196,160,80,0.15)';this.children[0].style.left=this.dataset.on==='1'?'22px':'2px'" data-on="1" style="width:44px;height:24px;background:#c4a050;border-radius:12px;position:relative;cursor:pointer;transition:background 0.3s;"><div style="position:absolute;left:22px;top:2px;width:20px;height:20px;background:#080808;border-radius:50%;transition:left 0.3s;"></div></div>
+            </div>
+            <div style="padding:12px 28px;background:#c4a050;color:#080808;font-size:9px;letter-spacing:3px;cursor:pointer;display:inline-block;transition:opacity 0.3s;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">SAVE CHANGES</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- DATA ----
+const companions = [
+  { name:"Victoria S.", tier:"ÉLITE", tags:["gala","corporate"], rating:4.97, events:142, emoji:"👑", desc:"Fluent in 4 languages. Art historian. Preferred for high-society events." },
+  { name:"Sophie R.", tier:"PREMIER", tags:["corporate","private"], rating:4.92, events:89, emoji:"🌹", desc:"Harvard MBA. Captivating conversationalist for corporate engagements." },
+  { name:"Isabelle M.", tier:"ÉLITE", tags:["gala","private"], rating:4.99, events:201, emoji:"✦", desc:"Former diplomat. Effortless charm in the most exclusive circles." },
+  { name:"Camille D.", tier:"PREMIER", tags:["private","gala"], rating:4.88, events:67, emoji:"🎭", desc:"Actress and vocalist. Perfect companion for theatre and arts events." },
+  { name:"Natasha V.", tier:"ÉLITE", tags:["corporate","gala"], rating:4.95, events:178, emoji:"💫", desc:"International relations expert. Immaculate presence at state functions." },
+  { name:"Elena B.", tier:"STANDARD", tags:["private","corporate"], rating:4.81, events:44, emoji:"🌙", desc:"Warm and vivacious. A natural storyteller for intimate gatherings." },
+  { name:"Margot L.", tier:"PREMIER", tags:["gala","private"], rating:4.93, events:110, emoji:"🎀", desc:"Fashion editor. Unmatched style and grace for luxury events." },
+  { name:"Diana C.", tier:"ÉLITE", tags:["corporate","private"], rating:4.98, events:164, emoji:"🦋", desc:"Multilingual economist. Brilliant mind for business and leisure alike." },
+];
+
+const reviews = [
+  { companion:"Victoria S.", event:"Opera Gala", rating:5, text:"An exceptional evening. Victoria was witty, elegant and made the entire night memorable.", date:"Nov 2024" },
+  { companion:"Sophie R.", event:"Corporate Dinner", rating:5, text:"Completely exceeded expectations. My clients were thoroughly impressed.", date:"Oct 2024" },
+  { companion:"Isabelle M.", event:"Private Soirée", rating:5, text:"Isabelle has an extraordinary presence. Absolutely flawless in every way.", date:"Sep 2024" },
+];
+
+let currentRating = 4;
+let activeFilter = 'all';
+
+// ---- INIT ----
+renderCompanions('all');
+renderReviews();
+animateCompanionDot();
+startEtaCountdown();
+
+function showPage(name) {
+  ['home','companions','booking','tracking','profile'].forEach(p => {
+    document.getElementById('page-'+p).style.display = p===name ? 'block' : 'none';
+  });
+  window.scrollTo(0,0);
+}
+
+// ---- COMPANIONS ----
+function renderCompanions(filter) {
+  const grid = document.getElementById('companionGrid');
+  const filtered = filter === 'all' ? companions : companions.filter(c => c.tags.includes(filter));
+  grid.innerHTML = filtered.map(c => `
+    <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:28px 24px;transition:all 0.3s;cursor:pointer;animation:fadeInUp 0.5s ease both;"
+      onmouseover="this.style.background='rgba(196,160,80,0.09)';this.style.borderColor='rgba(196,160,80,0.35)';this.style.transform='translateY(-4px)'"
+      onmouseout="this.style.background='rgba(196,160,80,0.04)';this.style.borderColor='rgba(196,160,80,0.12)';this.style.transform='translateY(0)'">
+      <div style="font-size:36px;margin-bottom:16px;">${c.emoji}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:4px;">${c.name}</div>
+      <div style="font-size:8px;letter-spacing:3px;color:#c4a050;margin-bottom:12px;">${c.tier}</div>
+      <p style="font-size:10px;line-height:1.8;color:#a09070;margin:0 0 16px;">${c.desc}</p>
+      <div style="display:flex;justify-content:space-between;font-size:9px;border-top:1px solid rgba(196,160,80,0.1);padding-top:12px;">
+        <span style="color:#c4a050;">⭐ ${c.rating}</span>
+        <span style="color:#a09070;">${c.events} events</span>
+      </div>
+      <div onclick="showPage('booking')" style="margin-top:16px;padding:10px;background:transparent;border:1px solid rgba(196,160,80,0.3);font-size:8px;letter-spacing:3px;text-align:center;color:#c4a050;transition:all 0.3s;"
+        onmouseover="this.style.background='rgba(196,160,80,0.15)'" onmouseout="this.style.background='transparent'">BOOK NOW</div>
+    </div>
+  `).join('');
+}
+
+function filterCompanions(filter) {
+  activeFilter = filter;
+  renderCompanions(filter);
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = '#c4a050';
+    b.style.borderColor = 'rgba(196,160,80,0.3)';
+  });
+  const btns = document.querySelectorAll('.filter-btn');
+  const idx = ['all','gala','corporate','private'].indexOf(filter);
+  if(btns[idx]) { btns[idx].style.background='#c4a050'; btns[idx].style.color='#080808'; }
+}
+
+// ---- BOOKING ----
+function submitBooking() {
+  const modal = document.getElementById('confirmModal');
+  modal.style.display = 'flex';
+}
+
+// ---- TRACKING ----
+function animateCompanionDot() {
+  const dot = document.getElementById('companionDot');
+  let positions = [{l:'20%',t:'50%'},{l:'30%',t:'45%'},{l:'42%',t:'48%'},{l:'55%',t:'49%'}];
+  let i = 0;
+  setInterval(() => {
+    i = (i+1) % positions.length;
+    dot.style.left = positions[i].l;
+    dot.style.top = positions[i].t;
+  }, 3000);
+}
+
+function startEtaCountdown() {
+  let mins = 12;
+  const el = document.getElementById('etaDisplay');
+  setInterval(() => {
+    if(mins > 0) { mins--; el.textContent = mins + ' min'; }
+    else { el.textContent = 'Arrived'; }
+  }, 8000);
+}
+
+// ---- PROFILE ----
+function setProfileTab(tab) {
+  ['overview','bookings','reviews','settings'].forEach(t => {
+    document.getElementById('profileTab-'+t).style.display = t===tab?'block':'none';
+    document.getElementById('tab-'+t).style.color = t===tab?'#c4a050':'#a09070';
+  });
+}
+
+function renderReviews() {
+  const list = document.getElementById('reviewsList');
+  if(!list) return;
+  list.innerHTML = reviews.map(r => `
+    <div style="background:rgba(196,160,80,0.04);border:1px solid rgba(196,160,80,0.12);padding:24px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px;letter-spacing:1px;">${r.companion}</div>
+          <div style="font-size:9px;color:#a09070;margin-top:2px;">${r.event} · ${r.date}</div>
+        </div>
+        <div style="color:#c4a050;font-size:13px;">${'★'.repeat(r.rating)}</div>
+      </div>
+      <p style="font-size:11px;color:#a09070;line-height:1.8;margin:0;font-style:italic;">"${r.text}"</p>
+    </div>
+  `).join('');
+}
+
+function setRating(n) {
+  currentRating = n;
+  const stars = document.getElementById('starRating').children;
+  for(let i=0;i<5;i++) stars[i].style.color = i<n?'#c4a050':'rgba(196,160,80,0.3)';
+}
+
+function submitReview() {
+  const text = document.getElementById('reviewText').value.trim();
+  if(!text) return;
+  reviews.unshift({ companion:"Victoria S.", event:"Metropolitan Gala", rating:currentRating, text, date:"Dec 2024" });
+  renderReviews();
+  document.getElementById('reviewText').value='';
+  setRating(5);
+}
+</script>
+</body>
+</html>

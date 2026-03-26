@@ -59,8 +59,8 @@ resource "aws_instance" "portfolio_server" {
                 sleep 2
               done
               docker rm -f portfolio 2>/dev/null
-              docker pull mickey06/testing
-              docker run -d -p 80:8080 --name portfolio mickey06/portfolio-app:latest
+              docker pull mickey06/testing:latest
+              docker run -d -p 80:8080 --name portfolio mickey06/testing:latest
               EOF
   tags = {
     Name = "portfolio-server"
