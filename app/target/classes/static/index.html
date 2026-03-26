@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title> Portfolio</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #060a0f;
+      --surface: #0d1520;
+      --surface2: #111d2e;
+      --accent: #12D640;
+      --accent2: #00b8ff;
+      --text: #c8d8e8;
+      --text-dim: #5a7a9a;
+      --border: rgba(18, 214, 64, 0.15);
+      --font-mono: 'Space Mono', monospace;
+      --font-display: 'Syne', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    a,
+    button {
+      cursor: none;
+    }
+
+    /* ─── CROSSHAIR CURSOR ─────────────────────────────── */
+    #crosshair {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 36px;
+      height: 36px;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.04s linear;
+    }
+
+    #crosshair .ch-ring {
+      position: absolute;
+      inset: 0;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      opacity: 0.85;
+    }
+
+    #crosshair .ch-ring-outer {
+      position: absolute;
+      inset: -8px;
+      border: 1px solid rgba(18, 214, 64, 0.25);
+      border-radius: 50%;
+    }
+
+    #crosshair .ch-line {
+      position: absolute;
+      background: var(--accent);
+    }
+
+    /* horizontal */
+    #crosshair .ch-h {
+      top: 50%;
+      left: -14px;
+      right: -14px;
+      height: 1px;
+      margin-top: -0.5px;
+    }
+
+    /* gap in horizontal */
+    #crosshair .ch-h::before,
+    #crosshair .ch-h::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      height: 1px;
+      background: var(--bg);
+    }
+
+    #crosshair .ch-h::before {
+      left: 14px;
+      right: 22px;
+    }
+
+    #crosshair .ch-h::after {
+      left: 22px;
+      right: 14px;
+    }
+
+    /* vertical */
+    #crosshair .ch-v {
+      left: 50%;
+      top: -14px;
+      bottom: -14px;
+      width: 1px;
+      margin-left: -0.5px;
+    }
+
+    #crosshair .ch-v::before,
+    #crosshair .ch-v::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 1px;
+      background: var(--bg);
+    }
+
+    #crosshair .ch-v::before {
+      top: 14px;
+      bottom: 22px;
+    }
+
+    #crosshair .ch-v::after {
+      top: 22px;
+      bottom: 14px;
+    }
+
+    /* center dot */
+    #crosshair .ch-dot {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* click pulse */
+    #crosshair.clicking .ch-ring {
+      transform: scale(1.5);
+      opacity: 0;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    #crosshair.clicking .ch-ring-outer {
+      transform: scale(0.7);
+      transition: transform 0.2s ease;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+
+    a:hover {
+      opacity: .75;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    /* ─── NOISE OVERLAY ────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      background-size: 200px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: .4;
+    }
+
+    /* ─── SCROLLBAR ────────────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* ─── HEADER / HERO ────────────────────────────────── */
+    #header {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    #header::after {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(18, 214, 64, .08) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    /* Grid lines */
+    #header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(18, 214, 64, .04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18, 214, 64, .04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      padding: 4px 14px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp .6s ease both;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+      color: #fff;
+      animation: fadeUp .6s .1s ease both;
+    }
+
+    .hero-name span {
+      color: var(--accent);
+    }
+
+    .hero-role {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: var(--text-dim);
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    .hero-role .typing {
+      color: var(--accent);
+    }
+
+    .hero-nav {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      justify-content: center;
+      animation: fadeUp .6s .3s ease both;
+    }
+
+    .hero-nav a {
+      padding: 8px 20px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      color: var(--text);
+      transition: all .2s;
+    }
+
+    .hero-nav a:hover,
+    .hero-nav a.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    .hero-socials {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      animation: fadeUp .6s .4s ease both;
+    }
+
+    .hero-socials a {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--text-dim);
+      transition: all .2s;
+    }
+
+    .hero-socials a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(18, 214, 64, .05);
+    }
+
+    /* ─── SECTION WRAPPER ──────────────────────────────── */
+    section {
+      padding: 5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-title h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── ABOUT ────────────────────────────────────────── */
+    #about {
+      background: var(--bg);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media(max-width:700px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .about-img-wrap {
+      position: relative;
+    }
+
+    .about-img-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 10px -10px -10px 10px;
+      border: 1px solid var(--accent);
+      z-index: 0;
+    }
+
+    .about-img-wrap img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      filter: grayscale(30%) contrast(1.05);
+      aspect-ratio: 3/4;
+      object-fit: cover;
+    }
+
+    .about-text p {
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .about-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .5rem 2rem;
+      margin-top: 1rem;
+    }
+
+    .about-meta li {
+      font-size: 13px;
+      color: var(--text-dim);
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .04);
+    }
+
+    .about-meta li strong {
+      color: var(--accent);
+      margin-right: 6px;
+    }
+
+    /* ─── INTERESTS ─────────────────────────────────────── */
+    .interests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .interest-card {
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      background: var(--surface);
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .interest-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s;
+    }
+
+    .interest-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .interest-card:hover {
+      background: var(--surface2);
+    }
+
+    .interest-card i,
+    .interest-card img {
+      font-size: 1.8rem;
+      margin-bottom: .6rem;
+      color: var(--accent);
+    }
+
+    .interest-card h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-display);
+    }
+
+    /* ─── EDUCATION ─────────────────────────────────────── */
+    #education {
+      background: var(--surface);
+    }
+
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .edu-card {
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      background: var(--bg);
+      transition: border-color .2s;
+    }
+
+    .edu-card:hover {
+      border-color: var(--accent);
+    }
+
+    .edu-card img {
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+      filter: brightness(1.2);
+    }
+
+    .edu-card .school {
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: .25rem;
+    }
+
+    .edu-card .year {
+      color: var(--accent);
+      font-size: 12px;
+      margin-bottom: .25rem;
+    }
+
+    .edu-card .degree {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    /* ─── CERTIFICATIONS ────────────────────────────────── */
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .cert-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+
+    .cert-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .cert-card img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cert-info {
+      padding: .75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+
+    .cert-info h4 {
+      font-size: 12px;
+      color: var(--text);
+      font-family: var(--font-display);
+      font-weight: 600;
+    }
+
+    .cert-info a {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 13px;
+      transition: all .2s;
+    }
+
+    .cert-info a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ─── PROJECTS ──────────────────────────────────────── */
+    #portfolio {
+      background: var(--bg);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .project-card img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
+
+    .project-body {
+      padding: 1.25rem;
+    }
+
+    .project-body h4 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: .5rem;
+    }
+
+    .project-tag {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      margin-bottom: .75rem;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: 12px;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      transition: all .2s;
+    }
+
+    .project-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ─── SKILLS ────────────────────────────────────────── */
+    #skills {
+      background: var(--surface);
+    }
+
+    .skills-block {
+      margin-bottom: 2.5rem;
+    }
+
+    .skills-block h4 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+    }
+
+    .lang-logos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .lang-logos img {
+      height: 44px;
+      width: auto;
+      filter: grayscale(40%) brightness(1.1);
+      transition: filter .2s;
+    }
+
+    .lang-logos img:hover {
+      filter: grayscale(0%) brightness(1.3);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 1rem;
+    }
+
+    .tool-item {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      padding: .75rem;
+      text-align: center;
+      transition: border-color .2s;
+    }
+
+    .tool-item:hover {
+      border-color: var(--accent);
+    }
+
+    .tool-item img {
+      height: 40px;
+      width: auto;
+      margin: 0 auto .5rem;
+      filter: grayscale(20%);
+    }
+
+    .tool-item span {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: block;
+    }
+
+    /* ─── CONTACT ───────────────────────────────────────── */
+    #contacts {
+      background: var(--bg);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .contact-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .contact-card i {
+      font-size: 1.4rem;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .contact-card h3 {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: .4rem;
+    }
+
+    .contact-card p,
+    .contact-card a {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .social-row {
+      display: flex;
+      gap: .6rem;
+      margin-top: .5rem;
+    }
+
+    .social-row a {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 14px;
+      transition: all .2s;
+    }
+
+    .social-row a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ─── FOOTER ────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* ─── ANIMATIONS ────────────────────────────────────── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--accent);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s infinite;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ CROSSHAIR CURSOR ══════════════════════════════════ -->
+  <div id="crosshair">
+    <div class="ch-ring-outer"></div>
+    <div class="ch-ring"></div>
+    <div class="ch-line ch-h"></div>
+    <div class="ch-line ch-v"></div>
+    <div class="ch-dot"></div>
+  </div>
+
+  <!-- ═══ HERO ════════════════════════════════════════════ -->
+  <header id="header">
+    <div class="hero-inner">
+      <h1 class="hero-name">Mihaash<span>.</span><br>Dharan M</h1>
+      <p class="hero-role">I'm &nbsp;<span class="typing" id="typing"></span><span class="cursor"></span></p>
+      <nav class="hero-nav">
+        <a href="#header" class="active">Home</a>
+        <a href="#about">About</a>
+        <a href="#education">Education</a>
+        <a href="#portfolio">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="https://drive.google.com/file/d/1ZSd3k1JiLyvS7suwvkWYEuvF4fPKgEGP/view?usp=sharing"
+          target="_blank">Resume</a>
+        <a href="#contacts">Contact</a>
+      </nav>
+      <div class="hero-socials">
+        <a href="https://www.linkedin.com/in/mihaash-dharan/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://github.com/Mihaash" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="mailto:mihaashdharan68@gmail.com"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ ABOUT ════════════════════════════════════════════ -->
+  <section id="about">
+    <div class="container">
+      <div class="section-title">
+        <h2>About</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-img-wrap">
+        </div>
+        <div class="about-text">
+          <p>I am Mihaash Dharan M, a Computer Science enthusiast passionate about DevOps, Cloud, and Cybersecurity. I
+            enjoy building secure and scalable systems by combining development, automation, and infrastructure
+            management.
+
+            I have hands-on experience with Docker, Kubernetes, Jenkins, Git, and Bash scripting, and I enjoy working
+            with CI/CD pipelines, containerization, and cloud environments. My projects include security tools like
+            vulnerability scanners, dark web monitoring systems, and malware analysis platforms, where I integrate
+            automation and security practices.</p>
+          <p>II am particularly interested in DevSecOps, Penetration Testing, and Security Operations (SOC), and I
+            continuously work on improving my skills in cloud security, infrastructure automation, and system
+            monitoring.</p>
+          <ul class="about-meta">
+            <li><strong>Birthday:</strong> 06 August 2005</li>
+            <li><strong>City:</strong> Coimbatore</li>
+            <li><strong>Phone:</strong> 8015706421</li>
+            <li><strong>Email:</strong>
+              <a href="mailto:mihaaashdharan68@gmail.com" style="color:rgb(105, 101, 101);">mihaaashdharan68@gmail.com
+              </a>
+            </li>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:4rem">
+        <h2>Interests</h2>
+      </div>
+      <div class="interests-grid">
+        <div class="interest-card"><i class="fas fa-globe"></i>
+          <h3>Web Development</h3>
+        </div>
+        <div class="interest-card"><i class="fas fa-shield-halved"></i>
+          <h3>Penetration Testing</h3>
+        </div>
+        <div class="interest-card">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Tux.svg" style="width:32px;height:32px;"
+            alt="Linux">
+          <h3>Linux Explorer</h3>
+        </div>
+        <div class="interest-card"><i class="fas fa-user-secret"></i>
+          <h3>DevOps</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ EDUCATION ═════════════════════════════════════════ -->
+  <section id="education">
+    <div class="container">
+      <div class="section-title">
+        <h2>Education</h2>
+      </div>
+
+
+      <div class="edu-grid" style="display:flex; gap:40px; width:90%; margin:auto;">
+
+        <!-- College -->
+        <div class="edu-card"
+          style="width:500px; height:250px; padding:20px; border:1px solid #ddd; text-align:center;">
+          <img src="assets/img/education/College Logo.png" alt="Sri Shakthi" style="width:500px;">
+          <div class="school">Sri Shakthi Institute of Engineering &amp; Technology</div>
+          <div class="year">2023 – 2027</div>
+          <div class="degree">B.E. Computer Science &amp; Engineering (Cyber Security)</div>
+        </div>
+
+        <!-- School -->
+        <div class="edu-card"
+          style="width:500px; height:250px; padding:20px; border:1px solid #ddd; text-align:center;">
+          <img src="assets/img/certification/44360eb7-22d2-49d3-ba0b-63552fa67b8b.png" alt="R.V. Matric"
+            style="width:500px;">
+          <div class="school">The R.V. Matriculation Higher Secondary School</div>
+          <div class="year">2022 – 2023</div>
+          <div class="degree">Higher Secondary Education — Grade: 72.6</div>
+        </div>
+
+      </div>
+
+      <div class="section-title" style="margin-top:4rem">
+        <h2>Certifications</h2>
+      </div>
+      <div class="certs-grid">
+
+
+
+        <div class="cert-card">
+          <img src="assets/img/certification/1772197685571.jpeg" alt="">
+          <div class="cert-info">
+            <h4>Dhruva 2025 – Karpagam College</h4>
+          </div>
+        </div>
+
+
+        <div class="cert-card">
+          <a href="assets/img/certification/1771571897051.jpeg" target="_blank">
+            <img src="assets/img/certification/1771571897051.jpeg" alt="">
+          </a>
+
+          <div class="cert-info">
+            <h4>Dhruva 2025 – Karpagam College</h4>
+          </div>
+        </div>
+
+
+
+        <div class="cert-card">
+          <img src="assets/img/certification/IMG_20250822_112657.jpg" alt="">
+          <div class="cert-info">
+            <h4>Dhruva 2025 – Karpagam College</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/714023107058_6.png" alt="">
+          <div class="cert-info">
+            <h4>HackQuest 2K25 – CyberHeals &amp; Jamal Mohamed</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/IMG_20250822_112629.jpg" alt="">
+          <div class="cert-info">
+            <h4>Exploit-X CTF – KPR Institute</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/IMG_20250822_121050.jpg" alt="">
+          <div class="cert-info">
+            <h4>ROOT@W4R CTF 2025 – PSNA College</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/714023107058.jpg" alt="">
+          <div class="cert-info">
+            <h4>Publication in Journal</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/714023107058_1.jpg" alt="">
+          <div class="cert-info">
+            <h4>Linux 100: Fundamentals – TCM Security</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/714023107058_3.jpg" alt="">
+          <div class="cert-info">
+            <h4>TryHackMe</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/vapt.jpg" alt="">
+          <div class="cert-info">
+            <h4>VAPT – Udemy</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/ec.png" alt="">
+          <div class="cert-info">
+            <h4>EC-Council</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/ecsql.png" alt="">
+          <div class="cert-info">
+            <h4>EC-Council SQL</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/root.jpeg" alt="">
+          <div class="cert-info">
+            <h4>Rootcipher</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/bash.jpg" alt="">
+          <div class="cert-info">
+            <h4>Bash Scripting</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/certificate-crpo-certified-ransomware-protection-officer-Mihaash.jpg"
+            alt="">
+          <div class="cert-info">
+            <h4>CRPO – Certified Ransomware Protection Officer</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/docker.jpg" alt="">
+          <div class="cert-info">
+            <h4>Docker</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/tryhackme.jpg" alt="">
+          <div class="cert-info">
+            <h4>TryHackMe Badge</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/jenkins.jpg" alt="">
+          <div class="cert-info">
+            <h4>Jenkins</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/Kubernetes.jpg" alt="">
+          <div class="cert-info">
+            <h4>Kubernetes</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/Chaitanya CTF.png" alt="">
+          <div class="cert-info">
+            <h4>Chaitanya CTF</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/Amrita Vishwa ctf.jpg" alt="">
+          <div class="cert-info">
+            <h4>Amrita Vishwa CTF</h4>
+          </div>
+        </div>
+
+        <div class="cert-card">
+          <img src="assets/img/certification/workshop.jpg" alt="">
+          <div class="cert-info">
+            <h4>Workshop Certificate</h4>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROJECTS ══════════════════════════════════════════ -->
+  <section id="portfolio">
+    <div class="container">
+      <div class="section-title">
+        <h2>Projects</h2>
+      </div>
+      <div class="projects-grid">
+
+        <div class="project-card">
+          <img src="assets/img/project/image.png" alt="DISKO 1 picoCTF">
+          <div class="project-body">
+            <span class="project-tag">Project</span>
+            <h4>Malware-capy</h4>
+            <a class="project-link" href="projects/project2.html"><i class="fas fa-arrow-right"></i> View
+              Details</a>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <img src="assets/img/project/Screenshot3.png" alt="Threat Intelligence Dashboard">
+          <div class="project-body">
+            <span class="project-tag">Project</span>
+            <h4>Multi-Tool Static Code Analysis and Security Dashboard</h4>
+            <a class="project-link" href="projects/project1.html"><i class="fas fa-arrow-right"></i> View Details</a>
+          </div>
+        </div>
+
+
+        <div class="project-card">
+          <img src="assets/img/project/threat.png" alt="Threat Intelligence Dashboard">
+          <div class="project-body">
+            <span class="project-tag">Project</span>
+            <h4>Threat Intelligence Dashboard</h4>
+            <a class="project-link" href="projects/project4.html"><i class="fas fa-arrow-right"></i> View Details</a>
+          </div>
+        </div>
+
+
+        <div class="project-card">
+          <img src="assets/img/project/url_detect.png" alt="URL Analyzer">
+          <div class="project-body">
+            <span class="project-tag">Project</span>
+            <h4>The URL Analyzer</h4>
+            <a class="project-link" href="projects/project3.html"><i class="fas fa-arrow-right"></i> View Details</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SKILLS ════════════════════════════════════════════ -->
+  <section id="skills">
+    <div class="container">
+      <div class="section-title">
+        <h2>Skills</h2>
+      </div>
+
+      <div class="skills-block">
+        <h4>Languages &amp; Databases</h4>
+        <div class="lang-logos">
+          <img src="https://www.vectorlogo.zone/logos/python/python-horizontal.svg" alt="Python">
+          <img src="https://www.vectorlogo.zone/logos/java/java-horizontal.svg" alt="Java">
+          <img src="https://www.vectorlogo.zone/logos/w3_html5/w3_html5-ar21.svg" alt="HTML5">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" alt="CSS3"
+            style="height:50px;width:auto;">
+          <img src="https://www.vectorlogo.zone/logos/mysql/mysql-horizontal.svg" alt="MySQL">
+        </div>
+      </div>
+
+      <div class="skills-block">
+        <h4>Security Tools</h4>
+        <div class="tools-grid">
+          <div class="tool-item">
+            <img src="https://nmap.org/images/nmap-logo-256x256.png" alt="Nmap">
+            <span>Nmap</span>
+          </div>
+          <div class="tool-item">
+            <img src="https://avatars.githubusercontent.com/u/8257440?s=200&v=4" alt="Nikto">
+            <span>Nikto</span>
+          </div>
+          <div class="tool-item">
+            <img src="https://www.kali.org/tools/sqlmap/images/sqlmap-logo.svg" alt="SQLmap">
+            <span>SQLmap</span>
+          </div>
+          <div class="tool-item">
+            <img src="https://www.kali.org/tools/hydra/images/hydra-logo.svg" alt="Hydra">
+            <span>Hydra</span>
+          </div>
+          <div class="tool-item">
+            <img src="https://www.kali.org/tools/john/images/john-logo.svg" alt="John the Ripper">
+            <span>John the Ripper</span>
+          </div>
+          <div class="tool-item">
+            <img src="https://www.kali.org/tools/gobuster/images/gobuster-logo.svg" alt="Gobuster">
+            <span>Gobuster</span>
+          </div>
+          <div class="tool-item">
+            <img src="https://www.svgrepo.com/show/454430/burpsuite-security-software.svg" alt="Burp Suite">
+            <span>Burp Suite</span>
+          </div>
+          <div class="tool-item">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Wireshark_icon.svg" alt="Wireshark">
+            <span>Wireshark</span>
+          </div>
+        </div>
+      </div>
+      <div class="skills-block">
+        <h4>Devops tools</h4>
+        <div class="lang-logos">
+          <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-ar21.svg" alt="Python">
+          <img src="https://www.vectorlogo.zone/logos/github/github-ar21.svg" alt="Java">
+          <img src="https://www.vectorlogo.zone/logos/docker/docker-official.svg" alt="HTML5">
+          <img src="https://www.vectorlogo.zone/logos/kubernetes/kubernetes-ar21.svg" alt="CSS3">
+          <img src="https://www.vectorlogo.zone/logos/jenkins/jenkins-ar21.svg" alt="MySQL">
+          <img src="https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-ar21.svg" alt="Java">
+          <img src="https://www.vectorlogo.zone/logos/apache_maven/apache_maven-ar21.svg" alt="Java">
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTACT ═══════════════════════════════════════════ -->
+  <section id="contacts">
+    <div class="container">
+      <div class="section-title">
+        <h2>Contact</h2>
+      </div>
+      <div class="contact-grid">
+
+        <div class="contact-card">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <h3>Email</h3>
+            <a href="mailto:mihaashdharan68@gmail.com">
+              mihaashdharan68@gmail.com
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-card">
+          <i class="fas fa-share-alt"></i>
+          <div>
+            <h3>Social Profiles</h3>
+            <div class="social-row">
+              <a href="https://www.linkedin.com/in/mihaash-dharan" target="_blank">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+              <a href="https://github.com/Mihaash" target="_blank">
+                <i class="fab fa-github"></i>
+              </a>
+              <a href="mailto:mihaashdharan68@gmail.com">
+                <i class="fas fa-envelope"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Mihaash Dharan M &nbsp;·&nbsp; Built with passion for security</p>
+  </footer>
+
+  <!-- ═══ SCRIPTS ═══════════════════════════════════════════ -->
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script>
+    /* ── Typing effect ── */
+    (function () {
+      const words = ["Web Developer", "Devops", , "Linux Explorer"];
+      let wi = 0, ci = 0, deleting = false;
+      const el = document.getElementById('typing');
+      function tick() {
+        const word = words[wi];
+        el.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++);
+        if (!deleting && ci > word.length) { deleting = true; setTimeout(tick, 1400); return; }
+        if (deleting && ci < 0) { deleting = false; wi = (wi + 1) % words.length; ci = 0; }
+        setTimeout(tick, deleting ? 55 : 80);
+      }
+      tick();
+    })();
+
+    /* ── Crosshair cursor ── */
+    (function () {
+      const ch = document.getElementById('crosshair');
+      document.addEventListener('mousemove', e => {
+        ch.style.left = e.clientX + 'px';
+        ch.style.top = e.clientY + 'px';
+      });
+      document.addEventListener('mousedown', () => ch.classList.add('clicking'));
+      document.addEventListener('mouseup', () => ch.classList.remove('clicking'));
+    })();
+
+    /* ── Smooth scroll ── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+  </script>
+</body>
+
+</html>

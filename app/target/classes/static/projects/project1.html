@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Code Security Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #0b0f0c;
+            color: #d4ffe2;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            max-width: 900px;
+            margin-top: 50px;
+        }
+
+        .card {
+            background: #111;
+            border: 1px solid #1f3;
+        }
+
+        .badge-green {
+            background: #12d640;
+        }
+
+        .badge-red {
+            background: #ff3c3c;
+        }
+
+        .badge-yellow {
+            background: #f0a500;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        ```
+        <!-- Title -->
+        <h1 class="text-success">⚡ Multi-Tool Static Code Analysis Dashboard</h1>
+        <p class="text-secondary">
+            Unified platform to scan source code using multiple security tools and visualize results in one dashboard.
+        </p>
+
+        <!-- Key Features -->
+        <div class="card p-3 mb-3">
+            <h5 class="text-success">🚀 Key Features</h5>
+            <ul>
+                <li>Upload source code (file / ZIP)</li>
+                <li>Runs multiple analyzers automatically</li>
+                <li>Aggregated results dashboard</li>
+                <li>Severity classification (Critical / Warning / OK)</li>
+                <li>Downloadable HTML & PDF reports</li>
+            </ul>
+        </div>
+
+        <!-- Tools -->
+        <div class="card p-3 mb-3">
+            <h5 class="text-success">🛠 Integrated Tools</h5>
+            <p>
+                Bandit, Semgrep, ESLint, Checkov, Flawfinder, PMD, Gitleaks, TruffleHog,
+                Hadolint, TFLint, Yamllint, and more.
+            </p>
+        </div>
+
+        <!-- Workflow -->
+        <div class="card p-3 mb-3">
+            <h5 class="text-success">⚙️ Workflow</h5>
+            <ol>
+                <li>Upload code (file or ZIP)</li>
+                <li>Auto-detect file types</li>
+                <li>Run relevant security tools</li>
+                <li>Classify findings by severity</li>
+                <li>Display results in dashboard</li>
+            </ol>
+        </div>
+
+        <!-- Severity -->
+        <div class="card p-3 mb-3">
+            <h5 class="text-success">📊 Severity Levels</h5>
+            <span class="badge badge-red">Critical</span>
+            <span class="badge badge-yellow">Warning</span>
+            <span class="badge badge-green">OK</span>
+            <span class="badge bg-secondary">Skipped</span>
+        </div>
+
+        <!-- Impact -->
+        <div class="card p-3 mb-3">
+            <h5 class="text-success">🔒 Security Impact</h5>
+            <ul>
+                <li>Detects vulnerabilities & weak cryptography</li>
+                <li>Finds hardcoded secrets (API keys, tokens)</li>
+                <li>Identifies insecure configurations</li>
+                <li>Improves code quality & security posture</li>
+            </ul>
+        </div>
+
+        <!-- GitHub -->
+        <div class="card p-3 text-center">
+            <h5 class="text-success">📂 Source Code</h5>
+            <a href="https://github.com/Mihaash/Multi-Tool-Static-Code-Analysis-and-Security-Dashboard"
+                class="btn btn-success mt-2" target="_blank">
+                View on GitHub
+            </a>
+        </div>
+        ```
+
+    </div>
+
+</body>
+
+</html>
