@@ -4,11 +4,6 @@ pipeline {
         IMAGE = "mickey06/testing"
     }
     stages {
-        stage('Checkout Code') {
-            steps {
-                git 'https://github.com/Mihaash/testing'
-            }
-        }
         stage('Build with Maven') {
             steps {
                 dir('app') {
