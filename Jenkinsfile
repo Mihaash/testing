@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     parameters {
-        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy to Kubernetes?')
+        booleanParam(name: 'RUN_DOCKER', defaultValue: false, description: 'Run Docker container?')
+        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy to EC2?')
     }
 
     environment {
@@ -10,13 +11,6 @@ pipeline {
     }
 
     stages {
-        stage('Build with Maven') {
-            steps {
-                dir('app') {
-                    sh 'mvn clean package -DskipTests'
-                }
-            }
-        }
 
         stage('Build Docker Image') {
             steps {
@@ -39,13 +33,26 @@ pipeline {
             }
         }
 
-        stage('Deploy to ec2') {
+        stage('Run Docker Container') {
             when {
-                expression { params.DEPLOY == true }
+                expression { params.RUN_DOCKER }
             }
             steps {
                 sh '''
-                terraform apply -auto-approve /terraform
+                docker stop myapp || true
+                docker rm myapp || true
+                docker run -d -p 8080:8080 --name myapp $IMAGE:latest
+                '''
+            }
+        }
+
+        stage('Deploy to EC2') {
+            when {
+                expression { params.DEPLOY }
+            }
+            steps {
+                sh '''
+                terraform apply -auto-approve
                 '''
             }
         }
