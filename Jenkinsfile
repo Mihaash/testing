@@ -1,8 +1,14 @@
 pipeline {
     agent any
+
+    parameters {
+        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Deploy to Kubernetes?')
+    }
+
     environment {
         IMAGE = "mickey06/testing"
     }
+
     stages {
         stage('Build with Maven') {
             steps {
@@ -11,11 +17,13 @@ pipeline {
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $IMAGE:latest .'
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(
@@ -30,11 +38,14 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to Kubernetes') {
+
+        stage('Deploy to ec2') {
+            when {
+                expression { params.DEPLOY == true }
+            }
             steps {
                 sh '''
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
+                terraform apply -auto-approve /terraform
                 '''
             }
         }
