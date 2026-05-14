@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Threat Intelligence Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --green: #12d640;
+      --green-dim: #0a9e2f;
+      --green-glow: rgba(18, 214, 64, 0.18);
+      --green-glow-strong: rgba(18, 214, 64, 0.35);
+      --bg-deep: #030a05;
+      --bg-panel: #071010;
+      --bg-card: #0a1a10;
+      --bg-card-hover: #0f2418;
+      --border: rgba(18, 214, 64, 0.2);
+      --border-hover: rgba(18, 214, 64, 0.55);
+      --text-primary: #d0ffe0;
+      --text-secondary: #7bc98a;
+      --text-muted: #3d7a4d;
+      --red: #ff3c3c;
+      --amber: #f0a500;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'Rajdhani', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100vh);
+      }
+    }
+
+    @keyframes flicker {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      92% {
+        opacity: 1;
+      }
+
+      93% {
+        opacity: 0.6;
+      }
+
+      94% {
+        opacity: 1;
+      }
+
+      96% {
+        opacity: 0.8;
+      }
+
+      97% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse-border {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 transparent, inset 0 0 0 0 transparent;
+      }
+
+      50% {
+        box-shadow: 0 0 18px var(--green-glow), inset 0 0 6px var(--green-glow);
+      }
+    }
+
+    @keyframes blink-cursor {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes data-scroll {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-50%);
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes corner-pulse {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes radar-ping {
+      0% {
+        transform: scale(0.4);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+    }
+
+    @keyframes glitch {
+
+      0%,
+      100% {
+        clip-path: inset(0 0 100% 0);
+        transform: none;
+      }
+
+      10% {
+        clip-path: inset(10% 0 80% 0);
+        transform: translateX(-3px);
+      }
+
+      20% {
+        clip-path: inset(40% 0 50% 0);
+        transform: translateX(3px);
+      }
+
+      30% {
+        clip-path: inset(70% 0 20% 0);
+        transform: translateX(-2px);
+      }
+
+      40% {
+        clip-path: inset(0 0 100% 0);
+        transform: none;
+      }
+    }
+
+    @keyframes tag-enter {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      animation: flicker 8s infinite;
+    }
+
+    /* CRT scanline overlay */
+    body::before {
+      content: '';
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(to bottom,
+          transparent 0px,
+          transparent 3px,
+          rgba(0, 0, 0, 0.09) 3px,
+          rgba(0, 0, 0, 0.09) 4px);
+      z-index: 9998;
+    }
+
+    /* Moving scanline */
+    body::after {
+      content: '';
+      pointer-events: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 120px;
+      background: linear-gradient(to bottom, transparent, rgba(18, 214, 64, 0.03) 50%, transparent);
+      animation: scanline 5s linear infinite;
+      z-index: 9997;
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    .page-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 32px 80px;
+      animation: fadeSlideUp 0.7s ease both;
+    }
+
+    /* ─── TOP NAV STRIP ─── */
+    .nav-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-strip .breadcrumb {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .nav-strip .breadcrumb span {
+      color: var(--green);
+    }
+
+    .status-dot {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .status-dot::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: blink-cursor 1.4s step-end infinite;
+    }
+
+    /* ─── HEADER ─── */
+    .header {
+      margin-bottom: 44px;
+      position: relative;
+    }
+
+    .header-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--green-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-tag::before {
+      content: '';
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: var(--green-dim);
+    }
+
+    .project-title {
+      font-family: var(--sans);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 28px rgba(18, 214, 64, 0.4), 0 0 60px rgba(18, 214, 64, 0.15);
+      position: relative;
+    }
+
+    /* Glitch layer */
+    .project-title::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 2px;
+      top: 0;
+      color: rgba(255, 60, 60, 0.25);
+      animation: glitch 7s 3s step-end infinite;
+      pointer-events: none;
+    }
+
+    .title-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.85em;
+      background: var(--green);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink-cursor 1s step-end infinite;
+    }
+
+    /* ─── META BADGES ─── */
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      background: rgba(18, 214, 64, 0.04);
+      color: var(--text-secondary);
+      border-radius: 2px;
+      transition: all 0.25s ease;
+      animation: tag-enter 0.4s ease both;
+    }
+
+    .badge:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .badge:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .badge:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .badge:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .badge:nth-child(5) {
+      animation-delay: 0.5s;
+    }
+
+    .badge:hover {
+      border-color: var(--border-hover);
+      background: rgba(18, 214, 64, 0.09);
+      color: var(--green);
+      box-shadow: 0 0 10px var(--green-glow);
+    }
+
+    .badge .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green-dim);
+    }
+
+    /* ─── MAIN CARD ─── */
+    .main-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 32px 36px;
+      position: relative;
+      margin-bottom: 28px;
+      transition: border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+      overflow: hidden;
+    }
+
+    .main-card::before,
+    .main-card::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-color: var(--green);
+      border-style: solid;
+      animation: corner-pulse 3s ease-in-out infinite;
+    }
+
+    .main-card::before {
+      top: -1px;
+      left: -1px;
+      border-width: 2px 0 0 2px;
+    }
+
+    .main-card::after {
+      bottom: -1px;
+      right: -1px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .main-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      box-shadow: 0 0 28px var(--green-glow), 0 0 80px rgba(18, 214, 64, 0.06);
+    }
+
+    .main-card:hover::before,
+    .main-card:hover::after {
+      animation: pulse-border 1.5s ease-in-out infinite;
+    }
+
+    .card-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .description {
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--text-secondary);
+    }
+
+    .description strong {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* ─── INFO GRID ─── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 600px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .info-tile::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--green);
+      transition: height 0.35s ease;
+    }
+
+    .info-tile:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 24px rgba(18, 214, 64, 0.12);
+    }
+
+    .info-tile:hover::before {
+      height: 100%;
+    }
+
+    .tile-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .tile-content {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .tile-content a {
+      color: var(--green);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: text-shadow 0.2s;
+    }
+
+    .tile-content a:hover {
+      text-shadow: 0 0 12px var(--green);
+    }
+
+    .tile-content a::after {
+      content: '↗';
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* ─── TECH TAGS ─── */
+    .tech-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tech-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border: 1px solid rgba(18, 214, 64, 0.15);
+      background: rgba(18, 214, 64, 0.03);
+      color: var(--text-muted);
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+    }
+
+    .tech-tag:hover {
+      border-color: var(--green-dim);
+      color: var(--green);
+      background: rgba(18, 214, 64, 0.08);
+      box-shadow: 0 0 8px var(--green-glow);
+    }
+
+    /* ─── LIVE DATA TICKER ─── */
+    .ticker-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 20px 22px;
+      margin-bottom: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticker-wrap::before,
+    .ticker-wrap::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-color: var(--green);
+      border-style: solid;
+    }
+
+    .ticker-wrap::before {
+      top: -1px;
+      right: -1px;
+      border-width: 2px 2px 0 0;
+    }
+
+    .ticker-wrap::after {
+      bottom: -1px;
+      left: -1px;
+      border-width: 0 0 2px 2px;
+    }
+
+    .ticker-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .ticker-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .live-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--red);
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .live-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 7px var(--red);
+      animation: blink-cursor 0.8s step-end infinite;
+    }
+
+    .ticker-stream {
+      height: 130px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticker-inner {
+      animation: data-scroll 12s linear infinite;
+    }
+
+    .ticker-line {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      padding: 4px 0;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(18, 214, 64, 0.06);
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .ticker-line .ts {
+      color: var(--green-dim);
+      min-width: 58px;
+    }
+
+    .ticker-line .src {
+      color: var(--text-muted);
+      min-width: 110px;
+    }
+
+    .ticker-line .sev {
+      min-width: 56px;
+    }
+
+    .ticker-line .url {
+      color: var(--text-secondary);
+      font-size: 11px;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sev.high {
+      color: var(--red);
+    }
+
+    .sev.med {
+      color: var(--amber);
+    }
+
+    .sev.low {
+      color: var(--green-dim);
+    }
+
+    /* ─── FEATURE PILLS ─── */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      background: rgba(18, 214, 64, 0.04);
+      color: var(--text-secondary);
+      border-radius: 2px;
+      transition: all 0.25s ease;
+      cursor: default;
+    }
+
+    .feature-pill:hover {
+      border-color: var(--border-hover);
+      color: var(--green);
+      background: rgba(18, 214, 64, 0.09);
+      box-shadow: 0 0 14px var(--green-glow);
+      transform: translateY(-1px);
+    }
+
+    .feature-pill .icon {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    /* ─── RADAR DECORATION ─── */
+    .radar-wrap {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .radar-wrap svg {
+      width: 100%;
+      height: 100%;
+      animation: spin 8s linear infinite;
+    }
+
+    .radar-ping {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--green);
+      transform: translate(-50%, -50%);
+      animation: radar-ping 2.5s ease-out infinite;
+    }
+
+    .radar-ping:nth-child(2) {
+      animation-delay: 1.25s;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer-strip {
+      margin-top: 52px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-strip .mono-text {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.07em;
+    }
+
+    .footer-strip .mono-text span {
+      color: var(--green);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrapper">
+
+    <!-- Nav strip -->
+    <div class="nav-strip">
+      <div class="breadcrumb"><span>SECURITY</span> / THREAT-INTEL-DASHBOARD</div>
+      <div class="status-dot">SYS ONLINE</div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-tag">[ PROJECT REPORT ]</div>
+      <h1 class="project-title" data-text="Threat Intelligence Dashboard">
+        Threat Intelligence Dashboard<span class="title-cursor"></span>
+      </h1>
+      <div class="meta-row">
+        <span class="badge"><span class="dot"></span>Python</span>
+        <span class="badge"><span class="dot"></span>Flask</span>
+        <span class="badge"><span class="dot"></span>APScheduler</span>
+        <span class="badge"><span class="dot"></span>MySQL</span>
+        <span class="badge"><span class="dot"></span>Abuse.ch</span>
+      </div>
+    </div>
+
+    <!-- Info grid -->
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="tile-label">// Tech Stack</div>
+        <div class="tile-content tech-grid">
+          <span class="tech-tag">python</span>
+          <span class="tech-tag">flask</span>
+          <span class="tech-tag">requests</span>
+          <span class="tech-tag">mysql-connector-python</span>
+          <span class="tech-tag">apscheduler</span>
+        </div>
+      </div>
+      <div class="info-tile">
+        <div class="tile-label">// Repository</div>
+        <div class="tile-content">
+          <a href="https://github.com/Mihaash/threat-intel-dashboard" target="_blank">
+            github.com/Mihaash/threat-intel-dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description card -->
+    <div class="main-card">
+      <div class="radar-wrap">
+        <div class="radar-ping"></div>
+        <div class="radar-ping"></div>
+        <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="28" cy="28" r="26" stroke="#12d640" stroke-width="0.6" stroke-opacity="0.4" />
+          <circle cx="28" cy="28" r="18" stroke="#12d640" stroke-width="0.6" stroke-opacity="0.3" />
+          <circle cx="28" cy="28" r="9" stroke="#12d640" stroke-width="0.6" stroke-opacity="0.3" />
+          <line x1="28" y1="2" x2="28" y2="54" stroke="#12d640" stroke-width="0.5" stroke-opacity="0.2" />
+          <line x1="2" y1="28" x2="54" y2="28" stroke="#12d640" stroke-width="0.5" stroke-opacity="0.2" />
+          <path d="M28 28 L28 2 A26 26 0 0 1 54 28 Z" fill="#12d640" fill-opacity="0.07" />
+        </svg>
+      </div>
+      <div class="card-label">// OVERVIEW</div>
+      <p class="description">
+        Collects <strong>malicious URL data</strong> from threat feeds including <strong>Abuse.ch</strong>,
+        stores entries in a structured database, and visualises threat trends on a
+        <strong>user-friendly web interface</strong>. The system updates every minute via a scheduled
+        job and is designed to support <strong>actionable threat response</strong> — including automatic
+        detection and blocking through firewall integration.
+      </p>
+      <div class="features">
+        <div class="feature-pill"><span class="icon">⟳</span> 60-second auto-refresh</div>
+        <div class="feature-pill"><span class="icon">◈</span> Firewall integration</div>
+        <div class="feature-pill"><span class="icon">▦</span> Threat visualisation</div>
+        <div class="feature-pill"><span class="icon">⬡</span> DB persistence</div>
+      </div>
+    </div>
+
+    <!-- Live feed ticker -->
+    <div class="ticker-wrap">
+      <div class="ticker-header">
+        <div class="ticker-title">// SIMULATED THREAT FEED</div>
+        <div class="live-badge">LIVE</div>
+      </div>
+      <div class="ticker-stream">
+        <div class="ticker-inner" id="ticker">
+          <!-- Lines duplicated for seamless loop -->
+          <div class="ticker-line"><span class="ts">00:01:22</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://194.165.16[.]28/bins/arm7</span></div>
+          <div class="ticker-line"><span class="ts">00:01:19</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev med">MED</span><span class="url">hxxps://malware-cdn[.]ru/payload.exe</span></div>
+          <div class="ticker-line"><span class="ts">00:01:14</span><span class="src">abuse.ch/feodo</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://45.142.212[.]100/c2/gate.php</span></div>
+          <div class="ticker-line"><span class="ts">00:01:09</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev low">LOW</span><span class="url">hxxp://suspicious-domain[.]top/dl</span></div>
+          <div class="ticker-line"><span class="ts">00:01:05</span><span class="src">abuse.ch/bazaar</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://103.75.186[.]122/agent.bin</span></div>
+          <div class="ticker-line"><span class="ts">00:01:01</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev med">MED</span><span class="url">hxxps://phish-kit[.]pw/update/fb.php</span></div>
+          <div class="ticker-line"><span class="ts">00:00:58</span><span class="src">abuse.ch/feodo</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://91.92.240[.]12/botnet/config</span></div>
+          <div class="ticker-line"><span class="ts">00:00:53</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev low">LOW</span><span class="url">hxxp://free-file[.]cc/setup.msi</span></div>
+          <!-- duplicated for loop -->
+          <div class="ticker-line"><span class="ts">00:01:22</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://194.165.16[.]28/bins/arm7</span></div>
+          <div class="ticker-line"><span class="ts">00:01:19</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev med">MED</span><span class="url">hxxps://malware-cdn[.]ru/payload.exe</span></div>
+          <div class="ticker-line"><span class="ts">00:01:14</span><span class="src">abuse.ch/feodo</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://45.142.212[.]100/c2/gate.php</span></div>
+          <div class="ticker-line"><span class="ts">00:01:09</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev low">LOW</span><span class="url">hxxp://suspicious-domain[.]top/dl</span></div>
+          <div class="ticker-line"><span class="ts">00:01:05</span><span class="src">abuse.ch/bazaar</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://103.75.186[.]122/agent.bin</span></div>
+          <div class="ticker-line"><span class="ts">00:01:01</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev med">MED</span><span class="url">hxxps://phish-kit[.]pw/update/fb.php</span></div>
+          <div class="ticker-line"><span class="ts">00:00:58</span><span class="src">abuse.ch/feodo</span><span
+              class="sev high">HIGH</span><span class="url">hxxp://91.92.240[.]12/botnet/config</span></div>
+          <div class="ticker-line"><span class="ts">00:00:53</span><span class="src">abuse.ch/urlhaus</span><span
+              class="sev low">LOW</span><span class="url">hxxp://free-file[.]cc/setup.msi</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-strip">
+      <div class="mono-text">PROJECT_ID: <span>TI-DASHBOARD-01</span></div>
+      <div class="mono-text">STATUS: <span>ACTIVE</span></div>
+    </div>
+
+  </div>
+</body>
+
+</html>

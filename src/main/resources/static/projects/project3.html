@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>The URL Analyzer</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --green: #12d640;
+      --green-dim: #0a9e2f;
+      --green-glow: rgba(18, 214, 64, 0.18);
+      --green-glow-strong: rgba(18, 214, 64, 0.35);
+      --bg-deep: #030a05;
+      --bg-card: #0a1a10;
+      --bg-card-hover: #0f2418;
+      --border: rgba(18, 214, 64, 0.2);
+      --border-hover: rgba(18, 214, 64, 0.55);
+      --text-primary: #d0ffe0;
+      --text-secondary: #7bc98a;
+      --text-muted: #3d7a4d;
+      --red: #ff3c3c;
+      --red-glow: rgba(255, 60, 60, 0.2);
+      --amber: #f0a500;
+      --cyan: #00e5ff;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'Rajdhani', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    @keyframes scanline {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(100vh);
+      }
+    }
+
+    @keyframes flicker {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      93% {
+        opacity: 0.65;
+      }
+
+      94% {
+        opacity: 1;
+      }
+
+      97% {
+        opacity: 0.85;
+      }
+
+      98% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes blink-cursor {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes corner-pulse {
+
+      0%,
+      100% {
+        opacity: 0.45;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes glitch {
+
+      0%,
+      100% {
+        clip-path: inset(0 0 100% 0);
+        transform: none;
+      }
+
+      10% {
+        clip-path: inset(8% 0 82% 0);
+        transform: translateX(-3px);
+      }
+
+      22% {
+        clip-path: inset(45% 0 44% 0);
+        transform: translateX(3px);
+      }
+
+      33% {
+        clip-path: inset(72% 0 18% 0);
+        transform: translateX(-2px);
+      }
+
+      44% {
+        clip-path: inset(0 0 100% 0);
+        transform: none;
+      }
+    }
+
+    @keyframes tag-enter {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes tile-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes scan-bar {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 110%;
+      }
+    }
+
+    @keyframes verdict-safe {
+
+      0%,
+      100% {
+        box-shadow: 0 0 10px var(--green-glow), 0 0 30px rgba(18, 214, 64, 0.07);
+      }
+
+      50% {
+        box-shadow: 0 0 22px var(--green-glow-strong), 0 0 55px rgba(18, 214, 64, 0.15);
+      }
+    }
+
+    @keyframes verdict-danger {
+
+      0%,
+      100% {
+        box-shadow: 0 0 10px var(--red-glow);
+      }
+
+      50% {
+        box-shadow: 0 0 22px rgba(255, 60, 60, 0.35), 0 0 55px rgba(255, 60, 60, 0.1);
+      }
+    }
+
+    @keyframes feature-in {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      animation: flicker 9s infinite;
+    }
+
+    body::before {
+      content: '';
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(to bottom,
+          transparent 0px, transparent 3px,
+          rgba(0, 0, 0, 0.08) 3px, rgba(0, 0, 0, 0.08) 4px);
+      z-index: 9998;
+    }
+
+    body::after {
+      content: '';
+      pointer-events: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 120px;
+      background: linear-gradient(to bottom, transparent, rgba(18, 214, 64, 0.025) 50%, transparent);
+      animation: scanline 6s linear infinite;
+      z-index: 9997;
+    }
+
+    .page-wrapper {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 56px 32px 80px;
+      animation: fadeSlideUp 0.65s ease both;
+    }
+
+    /* ── NAV ── */
+    .nav-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 44px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .breadcrumb {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    .breadcrumb span {
+      color: var(--green);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+    }
+
+    .status-pill::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 7px var(--green);
+      animation: blink-cursor 1.4s step-end infinite;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      margin-bottom: 38px;
+    }
+
+    .header-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--green-dim);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-tag::before {
+      content: '';
+      display: inline-block;
+      width: 26px;
+      height: 1px;
+      background: var(--green-dim);
+    }
+
+    .project-title {
+      font-family: var(--sans);
+      font-size: clamp(30px, 5.5vw, 50px);
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 26px rgba(18, 214, 64, 0.4), 0 0 55px rgba(18, 214, 64, 0.12);
+      position: relative;
+      display: inline-block;
+    }
+
+    .project-title::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 2px;
+      top: 0;
+      color: rgba(0, 229, 255, 0.18);
+      animation: glitch 8s 2.5s step-end infinite;
+      pointer-events: none;
+    }
+
+    .title-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.82em;
+      background: var(--green);
+      margin-left: 5px;
+      vertical-align: middle;
+      animation: blink-cursor 1s step-end infinite;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.07em;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      background: rgba(18, 214, 64, 0.04);
+      color: var(--text-secondary);
+      border-radius: 2px;
+      transition: all 0.24s ease;
+      animation: tag-enter 0.4s ease both;
+    }
+
+    .badge:nth-child(1) {
+      animation-delay: .08s
+    }
+
+    .badge:nth-child(2) {
+      animation-delay: .16s
+    }
+
+    .badge:nth-child(3) {
+      animation-delay: .24s
+    }
+
+    .badge:nth-child(4) {
+      animation-delay: .32s
+    }
+
+    .badge .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green-dim);
+    }
+
+    .badge:hover {
+      border-color: var(--border-hover);
+      background: rgba(18, 214, 64, 0.09);
+      color: var(--green);
+      box-shadow: 0 0 10px var(--green-glow);
+    }
+
+    /* ── CARD BASE ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 28px 32px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    }
+
+    .card::before,
+    .card::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-color: var(--green);
+      border-style: solid;
+      animation: corner-pulse 3.2s ease-in-out infinite;
+    }
+
+    .card::before {
+      top: -1px;
+      left: -1px;
+      border-width: 2px 0 0 2px;
+    }
+
+    .card::after {
+      bottom: -1px;
+      right: -1px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      box-shadow: 0 0 26px var(--green-glow);
+    }
+
+    .card-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── OVERVIEW ── */
+    .description {
+      font-family: var(--sans);
+      font-size: 16.5px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .description strong {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* ── INFO GRID ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 580px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+      animation: tile-reveal 0.5s ease both;
+    }
+
+    .info-tile:nth-child(1) {
+      animation-delay: .05s
+    }
+
+    .info-tile:nth-child(2) {
+      animation-delay: .12s
+    }
+
+    .info-tile::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--green);
+      transition: height 0.35s ease;
+    }
+
+    .info-tile:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 22px rgba(18, 214, 64, 0.12);
+    }
+
+    .info-tile:hover::before {
+      height: 100%;
+    }
+
+    .tile-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .tile-content {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .tile-content a {
+      color: var(--green);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: text-shadow 0.2s;
+    }
+
+    .tile-content a:hover {
+      text-shadow: 0 0 12px var(--green);
+    }
+
+    .tile-content a::after {
+      content: '↗';
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .tech-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .tech-chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border: 1px solid rgba(18, 214, 64, 0.15);
+      background: rgba(18, 214, 64, 0.03);
+      color: var(--text-muted);
+      border-radius: 2px;
+      transition: all 0.2s ease;
+    }
+
+    .tech-chip:hover {
+      border-color: var(--green-dim);
+      color: var(--green);
+      background: rgba(18, 214, 64, 0.08);
+      box-shadow: 0 0 8px var(--green-glow);
+    }
+
+    /* ── DETECTION CATEGORIES ── */
+    .detect-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 580px) {
+      .detect-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detect-tile {
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: border-color 0.28s, background 0.28s, transform 0.28s, box-shadow 0.28s;
+      animation: feature-in 0.45s ease both;
+    }
+
+    .detect-tile:nth-child(1) {
+      animation-delay: .06s
+    }
+
+    .detect-tile:nth-child(2) {
+      animation-delay: .12s
+    }
+
+    .detect-tile:nth-child(3) {
+      animation-delay: .18s
+    }
+
+    .detect-tile:nth-child(4) {
+      animation-delay: .24s
+    }
+
+    /* scanning shimmer bar */
+    .detect-tile::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      background: linear-gradient(90deg, transparent, rgba(18, 214, 64, 0.06), transparent);
+      left: -100%;
+      transition: none;
+    }
+
+    .detect-tile:hover::before {
+      animation: scan-bar 0.55s ease forwards;
+    }
+
+    .detect-tile:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 18px var(--green-glow);
+    }
+
+    /* danger tiles */
+    .detect-tile.danger {
+      border-color: rgba(255, 60, 60, 0.18);
+      background: rgba(255, 20, 20, 0.03);
+    }
+
+    .detect-tile.danger:hover {
+      border-color: rgba(255, 60, 60, 0.5);
+      box-shadow: 0 4px 18px var(--red-glow);
+    }
+
+    .detect-tile.danger .dt-icon {
+      color: var(--red);
+    }
+
+    .detect-tile.danger .dt-title {
+      color: #ff8080;
+    }
+
+    /* amber tiles */
+    .detect-tile.warn {
+      border-color: rgba(240, 165, 0, 0.15);
+      background: rgba(240, 165, 0, 0.02);
+    }
+
+    .detect-tile.warn:hover {
+      border-color: rgba(240, 165, 0, 0.45);
+      box-shadow: 0 4px 18px rgba(240, 165, 0, 0.15);
+    }
+
+    .detect-tile.warn .dt-icon {
+      color: var(--amber);
+    }
+
+    .detect-tile.warn .dt-title {
+      color: #f5c060;
+    }
+
+    .dt-icon {
+      font-size: 18px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .dt-title {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .dt-desc {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* ── VERDICT DEMO ── */
+    .verdict-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 580px) {
+      .verdict-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .verdict-safe {
+      border: 1px solid rgba(18, 214, 64, 0.35);
+      border-radius: 3px;
+      padding: 18px 20px;
+      background: rgba(18, 214, 64, 0.04);
+      animation: verdict-safe 3s ease-in-out infinite;
+      transition: background 0.3s;
+    }
+
+    .verdict-safe:hover {
+      background: rgba(18, 214, 64, 0.08);
+    }
+
+    .verdict-danger {
+      border: 1px solid rgba(255, 60, 60, 0.3);
+      border-radius: 3px;
+      padding: 18px 20px;
+      background: rgba(255, 20, 20, 0.04);
+      animation: verdict-danger 3s ease-in-out infinite;
+      transition: background 0.3s;
+    }
+
+    .verdict-danger:hover {
+      background: rgba(255, 20, 20, 0.08);
+    }
+
+    .verdict-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .verdict-url {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      word-break: break-all;
+    }
+
+    .verdict-result {
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .verdict-safe .verdict-result {
+      color: var(--green);
+      text-shadow: 0 0 12px rgba(18, 214, 64, 0.5);
+    }
+
+    .verdict-danger .verdict-result {
+      color: var(--red);
+      text-shadow: 0 0 12px rgba(255, 60, 60, 0.5);
+    }
+
+    .verdict-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .verdict-safe .verdict-dot {
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .verdict-danger .verdict-dot {
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red);
+    }
+
+    /* ── LINK CARD ── */
+    .link-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 20px 24px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      text-decoration: none;
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+
+    .link-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      box-shadow: 0 4px 24px rgba(18, 214, 64, 0.14);
+      transform: translateY(-2px);
+    }
+
+    .link-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .link-title {
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--green);
+      text-shadow: 0 0 10px rgba(18, 214, 64, 0.2);
+    }
+
+    .link-url {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .link-arrow {
+      font-size: 20px;
+      color: var(--green-dim);
+      transition: transform 0.25s, color 0.25s;
+    }
+
+    .link-card:hover .link-arrow {
+      transform: translate(3px, -3px);
+      color: var(--green);
+    }
+
+    /* ── FOOTER ── */
+    .footer-strip {
+      margin-top: 50px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .mono-text {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.07em;
+    }
+
+    .mono-text span {
+      color: var(--green);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrapper">
+
+    <!-- Nav -->
+    <div class="nav-strip">
+      <div class="breadcrumb">PORTFOLIO / <span>SECURITY TOOLS</span> / URL-ANALYZER</div>
+      <div class="status-pill">ACTIVE</div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-tag">[ SECURITY TOOL ]</div>
+      <h1 class="project-title" data-text="The URL Analyzer">
+        The URL Analyzer<span class="title-cursor"></span>
+      </h1>
+      <div class="meta-row">
+        <span class="badge"><span class="dot"></span>Flask</span>
+        <span class="badge"><span class="dot"></span>tldextract</span>
+        <span class="badge"><span class="dot"></span>Bootstrap</span>
+        <span class="badge"><span class="dot"></span>Regex</span>
+      </div>
+    </div>
+
+    <!-- Info grid -->
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="tile-label">// Tech Stack</div>
+        <div class="tile-content">
+          <div class="tech-chips">
+            <span class="tech-chip">flask</span>
+            <span class="tech-chip">tldextract</span>
+            <span class="tech-chip">bootstrap</span>
+            <span class="tech-chip">regex</span>
+            <span class="tech-chip">python</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-tile">
+        <div class="tile-label">// Repository</div>
+        <div class="tile-content">
+          <a href="https://github.com/Mihaash/Malicious-url-detection" target="_blank">
+            github.com/Mihaash/Malicious-url-detection
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview -->
+    <div class="card">
+      <div class="card-label">// OVERVIEW</div>
+      <p class="description">
+        A <strong>web-based URL safety analyser</strong> that lets users paste any link and
+        instantly receive a <strong>Safe</strong> or <strong>Not Safe</strong> verdict.
+        The tool inspects domain structure, TLD reputation, and pattern signatures to flag
+        <strong>phishing sites</strong>, <strong>malware distributors</strong>,
+        <strong>spam links</strong>, and <strong>suspicious domains</strong> —
+        before the user ever clicks.
+      </p>
+    </div>
+
+    <!-- Detection categories -->
+    <div class="card">
+      <div class="card-label">// THREAT DETECTION CATEGORIES</div>
+      <div class="detect-grid">
+
+        <div class="detect-tile danger">
+          <span class="dt-icon">⚠</span>
+          <div class="dt-title">Phishing Sites</div>
+          <div class="dt-desc">Detects spoofed login pages and credential-harvesting domains using pattern matching and
+            TLD analysis.</div>
+        </div>
+
+        <div class="detect-tile danger">
+          <span class="dt-icon">☣</span>
+          <div class="dt-title">Malware / Virus</div>
+          <div class="dt-desc">Flags URLs serving known malicious payloads, drive-by downloads, or exploit kit
+            endpoints.</div>
+        </div>
+
+        <div class="detect-tile warn">
+          <span class="dt-icon">◈</span>
+          <div class="dt-title">Spam / Scam Links</div>
+          <div class="dt-desc">Identifies spam domains, lottery scams, and deceptive redirect chains via structural
+            heuristics.</div>
+        </div>
+
+        <div class="detect-tile warn">
+          <span class="dt-icon">⬡</span>
+          <div class="dt-title">Suspicious Domains</div>
+          <div class="dt-desc">Catches newly registered, typosquatted, or algorithmically generated domains with low
+            trust scores.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Verdict demo -->
+    <div class="card">
+      <div class="card-label">// SAMPLE VERDICTS</div>
+      <div class="verdict-row">
+
+        <div class="verdict-safe">
+          <div class="verdict-label">INPUT URL</div>
+          <div class="verdict-url">https://github.com/torvalds/linux</div>
+          <div class="verdict-result">
+            <span class="verdict-dot"></span> SAFE
+          </div>
+        </div>
+
+        <div class="verdict-danger">
+          <div class="verdict-label">INPUT URL</div>
+          <div class="verdict-url">hxxp://secure-login-verify[.]xyz/account</div>
+          <div class="verdict-result">
+            <span class="verdict-dot"></span> NOT SAFE
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GitHub link -->
+    <a class="link-card" href="https://github.com/Mihaash/Malicious-url-detection" target="_blank">
+      <div>
+        <div class="link-label">// SOURCE CODE</div>
+        <div class="link-title">View on GitHub</div>
+        <div class="link-url">github.com/Mihaash/Malicious-url-detection</div>
+      </div>
+      <div class="link-arrow">↗</div>
+    </a>
+
+    <!-- Footer -->
+    <div class="footer-strip">
+      <div class="mono-text">PROJECT: <span>URL-ANALYZER</span></div>
+      <div class="mono-text">TYPE: <span>SECURITY TOOL</span></div>
+      <div class="mono-text">STATUS: <span>ACTIVE ✓</span></div>
+    </div>
+
+  </div>
+</body>
+
+</html>
